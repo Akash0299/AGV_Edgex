@@ -1,0 +1,106 @@
+name: "AgvSensors"
+manufacturer: "MaxAGV"
+model: "AGV Towing"
+labels:
+  - "agv"
+description: "Sensors providing metrics for AGV"
+
+deviceResources:
+      -
+        name: agv_temperature
+        description: "AGV temperature values"
+        properties:
+            value:
+             { type: "Int64", readWrite: "RW", minimum: "0", maximum: "50", size: "4", LSB: "true", defaultValue: "9"}
+      -
+        name: agv_speed
+        description: "AGV speed values"
+        properties:
+            value:
+             { type: "Int64", readWrite: "RW", minimum: "0", maximum: "1500", size: "4", LSB: "true", defaultValue: "9"}
+      -
+        name: agv_loadweight
+        description: "AGV loadweight values"
+        properties:
+            value:
+             { type: "Int64", readWrite: "RW", minimum: "0", maximum: "250", size: "4", LSB: "true", defaultValue: "9"}
+      -
+        name: agv_voltage
+        description: "AGV voltage(V) values"
+        properties:
+            value:
+             { type: "Int64", readWrite: "RW", minimum: "0", maximum: "48", size: "4", LSB: "true", defaultValue: "9"}
+      -
+        name: agv_current
+        description: "AGV current(I) values"
+        properties:
+            value:
+             { type: "Int64", readWrite: "RW", minimum: "0", maximum: "60", size: "4", LSB: "true", defaultValue: "9"}
+
+coreCommands:
+      -
+        name: agv_temperature
+        get:
+            path: "/api/v1/device/{deviceId}/agvtemperature"
+            responses:
+                 -
+                    code: "200"
+                    description: "Get AGV sensor measured temperature value"
+                    expectedValues: ["agv_temperature"] 
+                 -
+                    code: "503"
+                    description: "service unavailable"
+                    expectedValues: [] 
+      -
+        name: agv_speed
+        get:
+            path: "/api/v1/device/{deviceId}/agvspeed"
+            responses:
+                 -
+                    code: "200"
+                    description: "Get AGV speed measured"
+                    expectedValues: ["agv_speed"] 
+                 -
+                    code: "503"
+                    description: "service unavailable"
+                    expectedValues: []
+      -
+        name: agv_loadweight
+        get:
+            path: "/api/v1/device/{deviceId}/agvloadweight"
+            responses:
+                 -
+                    code: "200"
+                    description: "Get AGV sensor measured loadweight"
+                    expectedValues: ["agv_loadweight"] 
+                 -
+                    code: "503"
+                    description: "service unavailable"
+                    expectedValues: []           
+      -
+        name: agv_voltage
+        get:
+            path: "/api/v1/device/{deviceId}/agvvoltage"
+            responses:
+                 -
+                    code: "200"
+                    description: "Get AGV voltage(V) sensor measured value"
+                    expectedValues: ["agv_voltage"] 
+                 -
+                    code: "503"
+                    description: "service unavailable"
+                    expectedValues: [] 
+      -
+        name: agv_current
+        get:
+            path: "/api/v1/device/{deviceId}/agvcurrent"
+            responses:
+                 -
+                    code: "200"
+                    description: "Get AGV current(I) sensor measured value"
+                    expectedValues: ["agv_current"] 
+                 -
+                    code: "503"
+                    description: "service unavailable"
+                    expectedValues: []
+

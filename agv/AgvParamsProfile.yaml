@@ -1,0 +1,213 @@
+name: "AgvParams"
+manufacturer: "MaxAGV"
+model: "AGV Towing"
+labels:
+  - "agv"
+description: "Parameter metrics for AGV"
+
+deviceResources:
+      -
+        name: agv_power
+        description: "AGV average power consuming"
+        properties:
+            value:
+             { type: "Int64", readWrite: "RW", minimum: "0", maximum: "5000", size: "4", LSB: "true", defaultValue: "9"}
+      -
+        name: agv_batteryleft
+        description: "AGV battery left"
+        properties:
+            value:
+             { type: "Float64", size: "4", readWrite: "RW", minimum: "0", maximum: "100",floatEncoding: "eNotation"}
+      -
+        name: agv_downtime
+        description: "AGV Downtime"
+        properties:
+            value:
+             { type: "Int64", readWrite: "RW", minimum: "0", maximum: "100", size: "4", LSB: "true", defaultValue: "9"}
+      -
+        name: agv_uptime
+        description: "AGV Uptime"
+        properties:
+            value:
+             { type: "Int64", readWrite: "RW", minimum: "0", maximum: "100", size: "4", LSB: "true", defaultValue: "9"}
+      -
+        name: agv_timeleft
+        description: "AGV Time Left it can operate"
+        properties:
+            value:
+             { type: "Float64", size: "4", readWrite: "RW", minimum: "0", maximum: "10000",floatEncoding: "eNotation"}
+      -
+        name: agv_distanceleft
+        description: "AGV Distance Left it can cover"
+        properties:
+            value:
+             { type: "Float64", size: "4", readWrite: "RW", minimum: "0", maximum: "1000",floatEncoding: "eNotation"}
+      -
+        name: agv_distancecovered
+        description: "AGV Distance covered"
+        properties:
+            value:
+             { type: "Float64", size: "4", readWrite: "RW", minimum: "0", maximum: "1000",floatEncoding: "eNotation"}
+      -
+        name: agv_availability
+        description: "AGV Availability"
+        properties:
+            value:
+             { type: "String", size: "0", readWrite: "RW" ,scale: "", offset: "", base: "" ,defaultValue: "Available"}
+             
+deviceCommands:
+      - 
+        name: "agv_power"
+        get:
+           - { operation: "get", object:"agv_power", deviceResource: "agv_power" }
+      - 
+        name: "agv_batteryleft"
+        get:
+           - { operation: "get", object: "agv_batteryleft", deviceResource: "agv_batteryleft" }
+      - 
+        name: "agv_downtime"
+        get:
+           - { operation: "get", object: "agv_downtime", deviceResource: "agv_downtime" }
+      - 
+        name: "agv_uptime"
+        get:
+           - { operation: "get", object: "agv_uptime", deviceResource: "agv_uptime" }
+      - 
+        name: "agv_timeleft"
+        get:
+           - { operation: "get", object: "agv_timeleft", deviceResource: "agv_timeleft" }
+      - 
+        name: "agv_distanceleft"
+        get:
+           - { operation: "get", object: "agv_distanceleft", deviceResource: "agv_distanceleft" }
+      - 
+        name: "agv_distancecovered"
+        get:
+           - { operation: "get", object: "agv_distancecovered", deviceResource: "agv_distancecovered" }                           
+      - 
+        name: "agv_availability"
+        get:
+           - { operation: "get", object: "agv_availability", deviceResource: "agv_availability" }
+        set:
+           - { operation: "set", object: "agv_availability", deviceResource: "agv_availability" }
+          
+coreCommands:
+      -
+        name: agv_power
+        get:
+            path: "/api/v1/device/{deviceId}/agvpower"
+            responses:
+                 -
+                    code: "200"
+                    description: "Get AGV power consumed"
+                    expectedValues: ["agv_power"] 
+                 -
+                    code: "503"
+                    description: "service unavailable"
+                    expectedValues: [] 
+      -
+        name: agv_batteryleft
+        get:
+            path: "/api/v1/device/{deviceId}/agvbatteryleft"
+            responses:
+                 -
+                    code: "200"
+                    description: "Get AGV battery left"
+                    expectedValues: ["agv_batteryleft"] 
+                 -
+                    code: "503"
+                    description: "service unavailable"
+                    expectedValues: []
+      -
+        name: agv_downtime
+        get:
+            path: "/api/v1/device/{deviceId}/agvdowntime"
+            responses:
+                 -
+                    code: "200"
+                    description: "Get AGV Downtime"
+                    expectedValues: ["agv_downtime"] 
+                 -
+                    code: "503"
+                    description: "service unavailable"
+                    expectedValues: [] 
+      -
+        name: agv_uptime
+        get:
+            path: "/api/v1/device/{deviceId}/agvuptime"
+            responses:
+                 -
+                    code: "200"
+                    description: "Get AGV Uptime"
+                    expectedValues: ["agv_uptime"] 
+                 -
+                    code: "503"
+                    description: "service unavailable"
+                    expectedValues: [] 
+      -
+        name: agv_timeleft
+        get:
+            path: "/api/v1/device/{deviceId}/agvtimeleft"
+            responses:
+                 -
+                    code: "200"
+                    description: "Get AGV Time left it can operate"
+                    expectedValues: ["agv_timeleft"] 
+                 -
+                    code: "503"
+                    description: "service unavailable"
+                    expectedValues: []                    
+      -
+        name: agv_distanceleft
+        get:
+            path: "/api/v1/device/{deviceId}/agvdistanceleft"
+            responses:
+                 -
+                    code: "200"
+                    description: "Get AGV Distance left it can cover"
+                    expectedValues: ["agv_distanceleft"] 
+                 -
+                    code: "503"
+                    description: "service unavailable"
+                    expectedValues: []                    
+      -
+        name: agv_distancecovered
+        get:
+            path: "/api/v1/device/{deviceId}/agvdistancecovered"
+            responses:
+                 -
+                    code: "200"
+                    description: "Get AGV covered distance"
+                    expectedValues: ["agv_distancecovered"] 
+                 -
+                    code: "503"
+                    description: "service unavailable"
+                    expectedValues: []                    
+      -
+        name: agv_availability
+        get:
+            path: "/api/v1/device/{deviceId}/agvavailability"
+            responses:
+                 -
+                    code: "200"
+                    description: "Get AGV availability"
+                    expectedValues: ["agv_availability"] 
+                 -
+                    code: "503"
+                    description: "service unavailable"
+                    expectedValues: [] 
+        put:
+            path: "/api/v1/device/{deviceId}/agvavailability"
+            parameterNames: ["agv_availability"]
+            responses:
+                 -
+                    code: "200"
+                    description: "Set AGV availability"
+                    expectedValues: [] 
+                 -
+                    code: "503"
+                    description: "service unavailable"
+                    expectedValues: []                          
+                    
+                     
+

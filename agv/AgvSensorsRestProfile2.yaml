@@ -1,0 +1,50 @@
+name: "AgvSensors2"
+manufacturer: "MaxAGV"
+model: "AGV Towing"
+labels:
+  - "agv"
+description: "Sensors providing metrics for AGV"
+
+deviceResources:
+      -
+        name: agv_voltage
+        description: "AGV voltage(V) values"
+        properties:
+            value:
+             { type: "Int64", readWrite: "RW", minimum: "0", maximum: "48", size: "4", LSB: "true", defaultValue: "9"}
+      -
+        name: agv_current
+        description: "AGV current(I) values"
+        properties:
+            value:
+             { type: "Int64", readWrite: "RW", minimum: "0", maximum: "60", size: "4", LSB: "true", defaultValue: "9"}
+ 
+coreCommands:
+      -
+        name: agv_voltage
+        get:
+            path: "/api/v1/device/{deviceId}/agvvoltage"
+            responses:
+                 -
+                    code: "200"
+                    description: "Get AGV voltage(V) sensor measured value"
+                    expectedValues: ["agv_voltage"] 
+                 -
+                    code: "503"
+                    description: "service unavailable"
+                    expectedValues: [] 
+      -
+        name: agv_current
+        get:
+            path: "/api/v1/device/{deviceId}/agvcurrent"
+            responses:
+                 -
+                    code: "200"
+                    description: "Get AGV current(I) sensor measured value"
+                    expectedValues: ["agv_current"] 
+                 -
+                    code: "503"
+                    description: "service unavailable"
+                    expectedValues: []
+
+
