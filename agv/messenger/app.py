@@ -20,9 +20,9 @@ from datetime import datetime
 # Set environment variables
 # MQTTT authentication + port need to be set separately
 # on line 92 and 95 if required
-broker_address  = "172.29.80.72"
+broker_address  = "172.25.136.180"
 topic           = "AGV_Data"
-dbhost          = "172.29.80.72"
+dbhost          = "172.25.136.180"
 dbport          = 8086
 dbuser          = "admin"
 dbpassword      = "edgexfoundry"
