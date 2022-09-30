@@ -1,0 +1,83 @@
+name: "AgvParams2"
+manufacturer: "MaxAGV"
+model: "AGV Towing"
+labels:
+  - "agv"
+description: "Parameter metrics for AGV"
+
+deviceResources:
+      -
+        name: agv_downtimeval
+        description: "AGV Downtime Value"
+        properties:
+            value:
+             { type: "Float64", size: "4", readWrite: "RW", minimum: "0", maximum: "10000",floatEncoding: "eNotation"}
+      -
+        name: agv_uptimeval
+        description: "AGV Uptime Value"
+        properties:
+            value:
+             { type: "Float64", size: "4", readWrite: "RW", minimum: "0", maximum: "10000",floatEncoding: "eNotation"}
+      -
+        name: agv_runtime
+        description: "AGV Time Left it can operate"
+        properties:
+            value:
+             { type: "Float64", size: "4", readWrite: "RW", minimum: "0", maximum: "10000",floatEncoding: "eNotation"}
+             
+deviceCommands:
+      - 
+        name: "agv_downtimeval"
+        get:
+           - { operation: "get", object: "agv_downtimeval", deviceResource: "agv_downtimeval" }
+      - 
+        name: "agv_uptimeval"
+        get:
+           - { operation: "get", object: "agv_uptimeval", deviceResource: "agv_uptimeval" }
+      - 
+        name: "agv_runtime"
+        get:
+           - { operation: "get", object: "agv_timeleft", deviceResource: "agv_timeleft" }
+          
+coreCommands:
+      -
+        name: agv_downtimeval
+        get:
+            path: "/api/v1/device/{deviceId}/agvdowntimeval"
+            responses:
+                 -
+                    code: "200"
+                    description: "Get AGV Downtime Value"
+                    expectedValues: ["agv_downtimeval"] 
+                 -
+                    code: "503"
+                    description: "service unavailable"
+                    expectedValues: [] 
+      -
+        name: agv_uptimeval
+        get:
+            path: "/api/v1/device/{deviceId}/agvuptimeval"
+            responses:
+                 -
+                    code: "200"
+                    description: "Get AGV Uptime Value"
+                    expectedValues: ["agv_uptimeval"] 
+                 -
+                    code: "503"
+                    description: "service unavailable"
+                    expectedValues: [] 
+      -
+        name: agv_runtime
+        get:
+            path: "/api/v1/device/{deviceId}/agvrunime"
+            responses:
+                 -
+                    code: "200"
+                    description: "Get AGV Runtime"
+                    expectedValues: ["agv_runtime"] 
+                 -
+                    code: "503"
+                    description: "service unavailable"
+                    expectedValues: []                    
+ 
+        

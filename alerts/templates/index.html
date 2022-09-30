@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Demo app</title>
+  </head>
+
+  <body>
+
+    <center>
+
+    <table>
+        <tr><td id="colorChanger" bgcolor="blue" height=300px width=300px></td></tr>
+    </table>
+
+    </center>
+
+
+    <script type=text/javascript src="{{
+        url_for('static', filename='jquery.js') }}">
+    </script>
+
+
+    <script>
+        $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+        (function(){
+            $.getJSON(
+                $SCRIPT_ROOT+"/_ajaxAutoRefresh", 
+                function(data) {
+                document.getElementById("colorChanger").style.backgroundColor=data.color;
+                }
+            );
+            setTimeout(arguments.callee, 1000);
+        })();
+    </script>
+
+
+    </body>
+</html>
+

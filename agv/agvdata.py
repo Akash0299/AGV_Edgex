@@ -13,6 +13,7 @@ speedval = 1500
 weightval = 0
 vollevel=[0,48]
 td = 0
+tdp = 0
 
 from concurrent.futures import ThreadPoolExecutor
 
@@ -81,8 +82,9 @@ if __name__ == "__main__":
                
                print("AGV Values: Temperature- %s C, Speed- %s mm/s, LoadWeight- %s kg Voltage- %s V, Current- %s A" % (tempval, speedval, weightval,volval, curval))
                
-               urls_list=[('http://%s:49986/api/v1/resource/Agv_Params_1/agv_downtime' % edgexip,td,{'content-type': 'application/json'},False),\
-                   ('http://%s:49986/api/v1/resource/Agv_Params_1/agv_availability' % edgexip,"Available",{'content-type': 'application/json'},False) ]
+               urls_list=[('http://%s:49986/api/v1/resource/Agv_Params_1/agv_downtime' % edgexip,tdp,{'content-type': 'application/json'},False),\
+               ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_downtimeval' % edgexip,td,{'content-type': 'application/json'},False),\
+               ('http://%s:49986/api/v1/resource/Agv_Params_1/agv_availability' % edgexip,"Available",{'content-type': 'application/json'},False) ]
                with ThreadPoolExecutor(max_workers=6) as pool:
                    response_list = list(pool.map(post_urls,urls_list))
                 
@@ -118,9 +120,16 @@ if __name__ == "__main__":
                        
                    td1 = time.time() - td1
                    tr = time.time() - start_time
-                   td = td + round((td1 * 100) / tr)
-                   response = requests.post('http://%s:49986/api/v1/resource/Agv_Params_1/agv_downtime' % \
-                   edgexip,data=json.dumps(td),headers={'content-type': 'application/json'},verify=False)  
+                   tdp = tdp + round((td1 * 100) / tr)
+                   td = td + td1
+                   
+                   urls_list=[ ('http://%s:49986/api/v1/resource/Agv_Params_1/agv_downtime' %edgexip,tdp,{'content-type': 'application/json'},False) ,\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_downtimeval' %edgexip,td,{'content-type': 'application/json'},False),\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_runtime' %edgexip,tr,{'content-type': 'application/json'},False),\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_uptimeval' %edgexip,(tr - td),{'content-type': 'application/json'},False) ]
+                   with ThreadPoolExecutor(max_workers=6) as pool:
+                       response_list = list(pool.map(post_urls,urls_list))
+                   
                    td1=time.time()
                    
                    while volval < 48:
@@ -133,9 +142,16 @@ if __name__ == "__main__":
                        
                    td1 = time.time() - td1
                    tr = time.time() - start_time
-                   td = td + round((td1 * 100) / tr)
-                   response = requests.post('http://%s:49986/api/v1/resource/Agv_Params_1/agv_downtime' % \
-                   edgexip,data=json.dumps(td),headers={'content-type': 'application/json'},verify=False)  
+                   tdp = tdp + round((td1 * 100) / tr)
+                   td = td + td1
+                   
+                   urls_list=[ ('http://%s:49986/api/v1/resource/Agv_Params_1/agv_downtime' %edgexip,tdp,{'content-type': 'application/json'},False) ,\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_downtimeval' %edgexip,td,{'content-type': 'application/json'},False),\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_runtime' %edgexip,tr,{'content-type': 'application/json'},False),\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_uptimeval' %edgexip,(tr - td),{'content-type': 'application/json'},False) ]
+                   with ThreadPoolExecutor(max_workers=6) as pool:
+                       response_list = list(pool.map(post_urls,urls_list))
+                         
                    td1=time.time()
                    
                    while speedval<(1500-weightval):
@@ -149,11 +165,16 @@ if __name__ == "__main__":
                        
                    td1 = time.time() - td1
                    tr = time.time() - start_time
-                   td = td + round((td1 * 100) / tr)
+                   tdp = tdp + round((td1 * 100) / tr)
+                   td = td + td1
                    
                    td=td//2
+                   tdp=tdp//2
                    
-                   urls_list=[('http://%s:49986/api/v1/resource/Agv_Params_1/agv_downtime' % edgexip,td,{'content-type': 'application/json'},False),\
+                   urls_list=[('http://%s:49986/api/v1/resource/Agv_Params_1/agv_downtime' %edgexip,tdp,{'content-type': 'application/json'},False) ,\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_downtimeval' %edgexip,td,{'content-type': 'application/json'},False),\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_runtime' %edgexip,tr,{'content-type': 'application/json'},False),\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_uptimeval' %edgexip,(tr - td),{'content-type': 'application/json'},False),\
                    ('http://%s:49986/api/v1/resource/Agv_Params_1/agv_availability' % edgexip,"Available",{'content-type': 'application/json'},False) ]
                    with ThreadPoolExecutor(max_workers=6) as pool:
                        response_list = list(pool.map(post_urls,urls_list))
@@ -186,18 +207,32 @@ if __name__ == "__main__":
                    
                    td1 = time.time() - td1
                    tr = time.time() - start_time
-                   td = td + round((td1 * 100) / tr)
-                   response = requests.post('http://%s:49986/api/v1/resource/Agv_Params_1/agv_downtime' % \
-                   edgexip,data=json.dumps(td),headers={'content-type': 'application/json'},verify=False)  
+                   tdp = tdp + round((td1 * 100) / tr)
+                   td = td + td1
+                   
+                   urls_list=[ ('http://%s:49986/api/v1/resource/Agv_Params_1/agv_downtime' %edgexip,tdp,{'content-type': 'application/json'},False) ,\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_downtimeval' %edgexip,td,{'content-type': 'application/json'},False),\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_runtime' %edgexip,tr,{'content-type': 'application/json'},False),\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_uptimeval' %edgexip,(tr - td),{'content-type': 'application/json'},False) ]
+                   with ThreadPoolExecutor(max_workers=6) as pool:
+                       response_list = list(pool.map(post_urls,urls_list))
+                        
                    td1=time.time()
                    
                    time.sleep(5)
                    
                    td1 = time.time() - td1
                    tr = time.time() - start_time
-                   td = td + round((td1 * 100) / tr)
-                   response = requests.post('http://%s:49986/api/v1/resource/Agv_Params_1/agv_downtime' % \
-                   edgexip,data=json.dumps(td),headers={'content-type': 'application/json'},verify=False)  
+                   tdp = tdp + round((td1 * 100) / tr)
+                   td = td + td1
+                   
+                   urls_list=[ ('http://%s:49986/api/v1/resource/Agv_Params_1/agv_downtime' %edgexip,tdp,{'content-type': 'application/json'},False) ,\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_downtimeval' %edgexip,td,{'content-type': 'application/json'},False),\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_runtime' %edgexip,tr,{'content-type': 'application/json'},False),\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_uptimeval' %edgexip,(tr - td),{'content-type': 'application/json'},False) ]
+                   with ThreadPoolExecutor(max_workers=6) as pool:
+                       response_list = list(pool.map(post_urls,urls_list))
+                         
                    td1=time.time()
                    
                    while speedval<(1500-weightval):
@@ -211,9 +246,16 @@ if __name__ == "__main__":
                        
                    td1 = time.time() - td1
                    tr = time.time() - start_time
-                   td = td + round((td1 * 100) / tr)
+                   tdp = tdp + round((td1 * 100) / tr)
+                   td = td + td1
                    
-                   urls_list=[('http://%s:49986/api/v1/resource/Agv_Params_1/agv_downtime' % edgexip,td,{'content-type': 'application/json'},False),\
+                   td=td//2
+                   tdp=tdp//2
+                   
+                   urls_list=[('http://%s:49986/api/v1/resource/Agv_Params_1/agv_downtime' %edgexip,tdp,{'content-type': 'application/json'},False) ,\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_downtimeval' %edgexip,td,{'content-type': 'application/json'},False),\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_runtime' %edgexip,tr,{'content-type': 'application/json'},False),\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_uptimeval' %edgexip,(tr - td),{'content-type': 'application/json'},False),\
                    ('http://%s:49986/api/v1/resource/Agv_Params_1/agv_availability' % edgexip,"Available",{'content-type': 'application/json'},False) ]
                    with ThreadPoolExecutor(max_workers=6) as pool:
                        response_list = list(pool.map(post_urls,urls_list))
@@ -235,9 +277,16 @@ if __name__ == "__main__":
                    
                    td1 = time.time() - td1
                    tr = time.time() - start_time
-                   td = td + round((td1 * 100) / tr)
-                   response = requests.post('http://%s:49986/api/v1/resource/Agv_Params_1/agv_downtime' % \
-                   edgexip,data=json.dumps(td),headers={'content-type': 'application/json'},verify=False)  
+                   tdp = tdp + round((td1 * 100) / tr)
+                   td = td + td1
+                   
+                   urls_list=[ ('http://%s:49986/api/v1/resource/Agv_Params_1/agv_downtime' %edgexip,tdp,{'content-type': 'application/json'},False) ,\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_downtimeval' %edgexip,td,{'content-type': 'application/json'},False),\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_runtime' %edgexip,tr,{'content-type': 'application/json'},False),\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_uptimeval' %edgexip,(tr - td),{'content-type': 'application/json'},False) ]
+                   with ThreadPoolExecutor(max_workers=6) as pool:
+                       response_list = list(pool.map(post_urls,urls_list)) 
+                       
                    td1=time.time()
                    
                    while volval < 48:
@@ -250,9 +299,16 @@ if __name__ == "__main__":
                        
                    td1 = time.time() - td1
                    tr = time.time() - start_time
-                   td = td + round((td1 * 100) / tr)
-                   response = requests.post('http://%s:49986/api/v1/resource/Agv_Params_1/agv_downtime' % \
-                   edgexip,data=json.dumps(td),headers={'content-type': 'application/json'},verify=False)  
+                   tdp = tdp + round((td1 * 100) / tr)
+                   td = td + td1
+                   
+                   urls_list=[ ('http://%s:49986/api/v1/resource/Agv_Params_1/agv_downtime' %edgexip,tdp,{'content-type': 'application/json'},False) ,\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_downtimeval' %edgexip,td,{'content-type': 'application/json'},False),\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_runtime' %edgexip,tr,{'content-type': 'application/json'},False),\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_uptimeval' %edgexip,(tr - td),{'content-type': 'application/json'},False) ]
+                   with ThreadPoolExecutor(max_workers=6) as pool:
+                       response_list = list(pool.map(post_urls,urls_list))
+                         
                    td1=time.time()
                    
                    while speedval<(1500-weightval):
@@ -266,22 +322,31 @@ if __name__ == "__main__":
                        
                    td1 = time.time() - td1
                    tr = time.time() - start_time
-                   td = td+ round((td1 * 100) / tr)
+                   tdp = tdp + round((td1 * 100) / tr)
+                   td = td + td1
                    
                    td=td//2
+                   tdp=tdp//2
                    
-                   urls_list=[('http://%s:49986/api/v1/resource/Agv_Params_1/agv_downtime' % edgexip,td,{'content-type': 'application/json'},False),\
+                   urls_list=[('http://%s:49986/api/v1/resource/Agv_Params_1/agv_downtime' %edgexip,tdp,{'content-type': 'application/json'},False) ,\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_downtimeval' %edgexip,td,{'content-type': 'application/json'},False),\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_runtime' %edgexip,tr,{'content-type': 'application/json'},False),\
+                   ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_uptimeval' %edgexip,(tr - td),{'content-type': 'application/json'},False),\
                    ('http://%s:49986/api/v1/resource/Agv_Params_1/agv_availability' % edgexip,"Available",{'content-type': 'application/json'},False) ]
                    with ThreadPoolExecutor(max_workers=6) as pool:
                        response_list = list(pool.map(post_urls,urls_list))
          
+               tr = time.time() - start_time
+                
                urls_list=[('http://%s:49986/api/v1/resource/Agv_01/agv_temperature' % edgexip,tempval,{'content-type': 'application/json'},False),\
                ('http://%s:49986/api/v1/resource/Agv_01/agv_speed' % edgexip,speedval,{'content-type': 'application/json'},False),\
                ('http://%s:49986/api/v1/resource/Agv_01/agv_loadweight' % edgexip,weightval,{'content-type': 'application/json'},False),\
                ('http://%s:49986/api/v1/resource/Agv_01/agv_voltage' % edgexip,volval,{'content-type': 'application/json'},False),\
                ('http://%s:49986/api/v1/resource/Agv_01/agv_current' % edgexip,curval,{'content-type': 'application/json'},False),\
                ('http://%s:49986/api/v1/resource/Agv_Params_1/agv_power' % edgexip,volval*curval,{'content-type': 'application/json'},False),\
-               ('http://%s:49986/api/v1/resource/Agv_Params_1/agv_distanceleft' % edgexip,(speedval*72*(volval/480000)),{'content-type': 'application/json'},False)]
+               ('http://%s:49986/api/v1/resource/Agv_Params_1/agv_distanceleft' % edgexip,(speedval*72*(volval/480000)),{'content-type': 'application/json'},False),\
+               ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_runtime' %edgexip,tr,{'content-type': 'application/json'},False),\
+               ('http://%s:49986/api/v1/resource/Agv_Params_1_2/agv_uptimeval' %edgexip,(tr - td),{'content-type': 'application/json'},False)]
         
                 
                with ThreadPoolExecutor(max_workers=6) as pool:
