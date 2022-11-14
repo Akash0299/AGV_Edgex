@@ -4,7 +4,7 @@ import random
 import time
 
 
-edgexip = '172.25.136.180'
+edgexip = '172.18.246.22'
 
 volval=48
 curval=30
@@ -17,7 +17,59 @@ tdp = 0
 
 from concurrent.futures import ThreadPoolExecutor
 
+def createSubscription():
+    subscription={
+  "channels": [
+    {
+      "mailAddresses": [
+        "akash.m1@ltts.com",
+        "sirisatwikakotha29@gmail.com"
+      ],
+      "type": "EMAIL"
+    }
+  ],
+  "description": "Edgex Notification",
+  "subscribedCategories": [
+    "SECURITY"
+  ],
+  "subscribedLabels": [
+    "metadata"
+  ],
+  "receiver":"Admin",
+  "slug":"AGValert"
+  }
+    response = requests.post('http://%s:48060/api/v1/subscription' % \
+                       edgexip,json=subscription,headers={'content-type': 'application/json'},verify=False)
+    return response
 
+def deleteSubscription():
+    response = requests.delete('http://%s:48060/api/v1/subscription/slug/AGValert' % \
+                       edgexip,headers={'content-type': 'application/json'},verify=False)
+    return response
+    
+#def deleteNotification():
+#    response = requests.delete('http://%s:48060/api/v1/notification/slug/AGValert' % \
+#                       edgexip,headers={'content-type': 'application/json'},verify=False)
+#    return response
+
+def sendNotification(msg):
+    notification = {
+    "category": "SECURITY",
+    "content": msg ,
+    "description": "Alert regarding AGV",
+    "labels": [
+        "metadata"
+    ],
+    "sender": "edgex-kuiper",
+    "severity": "CRITICAL",
+    "slug": "AGValert",
+    "status": "NEW"
+    }
+    response = requests.post('http://%s:48060/api/v1/notification' % \
+                       edgexip,json=notification,headers={'content-type': 'application/json'},verify=False)
+    return response
+
+   
 def generateVoltageData(volval, vollevel):
     if volval==0: 
        volval=vollevel[random.randint(0,1)]
@@ -96,6 +148,11 @@ if __name__ == "__main__":
                    response = requests.post('http://%s:49986/api/v1/resource/Agv_Params_1/agv_availability' % \
                    edgexip,data=json.dumps("Unavailable"),headers={'content-type': 'application/json'},verify=False)
                    td1 = time.time()
+                   
+                   createSubscription()
+                   msg = 'Alert: AGV Temperature value is '+str(tempval)+' and Battery Levels are also low ('+str(battery)+')'
+                   sendNotification(msg)
+                   time.sleep(5)
                    
                    print("Inside condition1")
                    response = requests.post('http://%s:49986/api/v1/resource/Agv_01/agv_temperature' % \
@@ -178,11 +235,18 @@ if __name__ == "__main__":
                    ('http://%s:49986/api/v1/resource/Agv_Params_1/agv_availability' % edgexip,"Available",{'content-type': 'application/json'},False) ]
                    with ThreadPoolExecutor(max_workers=6) as pool:
                        response_list = list(pool.map(post_urls,urls_list))
+                   #deleteNotification()
+                   deleteSubscription()
                                 
                elif tempval > 40 or tempval < 0:
                    response = requests.post('http://%s:49986/api/v1/resource/Agv_Params_1/agv_availability' % \
                    edgexip,data=json.dumps("Unavailable"),headers={'content-type': 'application/json'},verify=False)
                    td1 = time.time()
+                   
+                   createSubscription()
+                   msg = 'Alert: AGV Temperature value is '+str(tempval)+' and Battery Levels are also low ('+str(battery)+')'
+                   sendNotification(msg)
+                   time.sleep(5)
                    
                    print("Inside condition 2")
                    response = requests.post('http://%s:49986/api/v1/resource/Agv_01/agv_temperature' % \
@@ -259,10 +323,17 @@ if __name__ == "__main__":
                    ('http://%s:49986/api/v1/resource/Agv_Params_1/agv_availability' % edgexip,"Available",{'content-type': 'application/json'},False) ]
                    with ThreadPoolExecutor(max_workers=6) as pool:
                        response_list = list(pool.map(post_urls,urls_list))
+                   #deleteNotification()
+                   deleteSubscription()
                elif battery < 20 :
                    response = requests.post('http://%s:49986/api/v1/resource/Agv_Params_1/agv_availability' % \
                    edgexip,data=json.dumps("Unavailable"),headers={'content-type': 'application/json'},verify=False) 
                    td1 = time.time()
+                   
+                   createSubscription()
+                   msg = 'Alert: AGV Temperature value is '+str(tempval)+' and Battery Levels are also low ('+str(battery)+')'
+                   sendNotification(msg)
+                   time.sleep(5)
                    
                    print('Inside condition 3')
                                         
@@ -335,6 +406,8 @@ if __name__ == "__main__":
                    ('http://%s:49986/api/v1/resource/Agv_Params_1/agv_availability' % edgexip,"Available",{'content-type': 'application/json'},False) ]
                    with ThreadPoolExecutor(max_workers=6) as pool:
                        response_list = list(pool.map(post_urls,urls_list))
+                   #deleteNotification()
+                   deleteSubscription()
          
                tr = time.time() - start_time
                 
@@ -356,4 +429,5 @@ if __name__ == "__main__":
                    flag= not flag    
                    
                    
-
+#        "vijay.raichurkar@ltts.com",
+#        "murali.krishna1@ltts.com"
